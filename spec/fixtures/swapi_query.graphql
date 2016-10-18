@@ -1,0 +1,137 @@
+query($id: ID!) {
+  node(id: $id) {
+    ... on Film {
+      speciesConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      starshipConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      vehicleConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      characterConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      planetConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    ... on Person {
+      homeworld {
+        id
+      }
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      species {
+        id
+      }
+      starshipConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      vehicleConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    ... on Planet {
+      residentConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    ... on Species {
+      homeworld {
+        id
+      }
+      personConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    ... on Starship {
+      pilotConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    ... on Vehicle {
+      pilotConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  }
+}

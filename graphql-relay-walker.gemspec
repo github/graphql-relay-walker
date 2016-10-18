@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "graphql", "~> 0.19"
 
-  s.add_development_dependency "rake",  "~> 11.3"
-  s.add_development_dependency "rspec", "~> 3.5"
+  s.add_development_dependency "rake",           "~> 11.3"
+  s.add_development_dependency "rspec",          "~> 3.5"
+  s.add_development_dependency "graphql-client", "~> 0.2"
 end
