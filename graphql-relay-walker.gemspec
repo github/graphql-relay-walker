@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "graphql-relay-walker"
-  s.version     = "0.0.1"
+  s.version     = "0.0.2"
   s.licenses    = ["MIT"]
   s.summary     = "Traverse a Relay GraphQL graph"
   s.authors     = ["Ben Toews"]
