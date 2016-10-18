@@ -10,4 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/github/graphql-relay-walker"
 
   s.add_dependency "graphql", "~> 0.19"
+
+  s.add_development_dependency "rake",  "~> 11.3"
+  s.add_development_dependency "rspec", "~> 3.5"
 end

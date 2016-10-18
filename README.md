@@ -8,8 +8,8 @@
 
 You can install this library as a Ruby Gem:
 
-```bash
-gem install graphql-relay-walker
+```
+$ gem install graphql-relay-walker
 ```
 
 ## Usage
@@ -60,3 +60,19 @@ SWAPI::Client.walk(from_id: skywalker_gid) do |frame|
   frame.result
 end
 ```
+
+## Development
+
+1. Clone repository and install dependencies
+
+  ```
+  $ git clone https://github.com/github/graphql-relay-walker
+  $ cd graphql-relay-walker
+  $ bundle install
+  ```
+
+2. Run tests
+
+  ```
+  $ bundle exec rake
+  ```
