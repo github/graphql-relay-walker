@@ -1,6 +1,7 @@
 module GraphQL::Relay::Walker
   class Queue
     attr_accessor :max_size, :random_idx
+    attr_reader   :queue, :seen
 
     # Initialize a new Queue.
     #
@@ -21,16 +22,16 @@ module GraphQL::Relay::Walker
     # Add a frame to the queue if its GID hasn't been seen already and the queue
     # hasn't exceeded its max size.
     #
-    # frame - The Queue::Frame to add to the queue.
+    # frame - The Frame to add to the queue.
     #
     # Returns true if the frame was added, false otherwise.
     def add(frame)
       return false if max_size && queue.length >= max_size
-      return false if @seen.include?(frame.gid)
+      return false if seen.include?(frame.gid)
 
-      @seen.add(frame.gid)
-      idx = random_idx ? rand(@queue.length + 1) : @queue.length
-      @queue.insert(idx, frame)
+      seen.add(frame.gid)
+      idx = random_idx ? rand(queue.length + 1) : queue.length
+      queue.insert(idx, frame)
 
       true
     end
@@ -50,58 +51,10 @@ module GraphQL::Relay::Walker
     #
     # Returns nothing.
     def each_frame
-      while frame = @queue.shift
+      return enum_for(:each_frame) unless block_given?
+
+      while frame = queue.shift
         yield(frame)
-      end
-    end
-  end
-
-  class Frame
-    attr_reader :queue, :gid, :parent, :context
-    attr_accessor :result
-
-    # Initialize a new Frame.
-    #
-    # queue  - The Queue that this frame belongs to.
-    # gid    - The String GID.
-    # parent - The Frame where this GID was discovered.
-    #
-    # Returns nothing.
-    def initialize(queue, gid, parent)
-      @queue   = queue
-      @gid     = gid
-      @parent  = parent
-      @context = {}
-    end
-
-    # Add each found GID to the queue.
-    #
-    # Returns nothing.
-    def enqueue_found_gids
-      found_gids.each { |gid| queue.add(child(gid)) }
-    end
-
-    # Make a new frame with the given GID and this frame as its parent.
-    #
-    # gid - The String GID to create the frame with.
-    #
-    # Returns a Queue::Frame instance.
-    def child(gid)
-      Frame.new(queue, gid, self)
-    end
-
-    # The GIDs from this frame's results.
-    #
-    # Returns an Array of GID Strings.
-    def found_gids(data=result)
-      [].tap do |ids|
-        case data
-        when Hash
-          ids.concat(Array(data["id"]))
-          ids.concat(found_gids(data.values))
-        when Array
-          data.each { |datum| ids.concat(found_gids(datum)) }
-        end
       end
     end
   end

@@ -1,3 +1,5 @@
+require "graphql"
+
 module GraphQL::Relay
   module Walker
     # Build a query that starts with a relay node and grabs the IDs of all its
@@ -13,7 +15,7 @@ module GraphQL::Relay
     # Start traversing a graph, starting from the given relay node ID.
     #
     # from_id: - The `ID!` id to start walking from.
-    # &blk     - A block to call with each Walker::Queue::Frame that is visited.
+    # &blk     - A block to call with each Walker::Frame that is visited.
     #            This block is responsible for executing a query for the frame's
     #            GID, storing the results in the frame, and enqueuing further
     #            node IDs to visit.
@@ -29,4 +31,5 @@ module GraphQL::Relay
 end
 
 require "graphql/relay/walker/queue"
+require "graphql/relay/walker/frame"
 require "graphql/relay/walker/query_builder"

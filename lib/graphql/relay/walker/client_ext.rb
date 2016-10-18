@@ -3,7 +3,7 @@ module GraphQL::Relay::Walker
     # Walk this client's graph from the given GID.
     #
     # from_id: - The String GID to start walking from.
-    # &blk     - A block to call with each Walker::Queue::Frame that is visited.
+    # &blk     - A block to call with each Walker::Frame that is visited.
     #
     # Returns nothing.
     def walk(from_id:)
