@@ -77,6 +77,18 @@ end
   $ bundle exec rake
   ```
 
+## Compatibility & Versioning
+
+This project is designed to work with Ruby 2.0.0 or greater. While it may work on other version of Ruby, below are the platform and runtime versions officially supported and regularly tested against.
+
+Platform | Versions
+-------- | --------
+MRI | 2.0.0, 2.1.x, 2.2.x, 2.3.x
+JRuby | 1.7.x, 9.0.0.0
+Rubinius | 2.x
+
+All releases adhere to strict [semantic versioning](http://semver.org). For Example, major.minor.patch-pre (aka. stick.carrot.oops-peek).
+
 ## Contributions and Feedback
 
 We love community contributions! If you're planning to send us a pull request, please make sure read our [Contributing Guidelines](https://github.com/github/graphql-relay-walker/blob/master/CONTRIBUTING.md) first.
