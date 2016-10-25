@@ -89,7 +89,7 @@ Rubinius | 2.x
 
 All releases adhere to strict [semantic versioning](http://semver.org). For Example, major.minor.patch-pre (aka. stick.carrot.oops-peek).
 
-## Contributions and Feedback
+## Contributions & Feedback
 
 We love community contributions! If you're planning to send us a pull request, please make sure read our [Contributing Guidelines](https://github.com/github/graphql-relay-walker/blob/master/CONTRIBUTING.md) first.
 
