@@ -1,4 +1,4 @@
-# GraphQL Relay Walker
+# GraphQL Relay Walker [![Build Status](https://travis-ci.org/github/graphql-relay-walker.svg?branch=master)](https://travis-ci.org/github/graphql-relay-walker)  [![Gem Version](https://badge.fury.io/rb/graphql-relay-walker.svg)](http://badge.fury.io/rb/graphql-relay-walker)
 
 ![](https://cloud.githubusercontent.com/assets/1144197/19287829/9ce479b8-8fc0-11e6-975c-8d686e3e0783.jpg)
 
@@ -76,3 +76,45 @@ end
   ```
   $ bundle exec rake
   ```
+
+## Compatibility & Versioning
+
+This project is designed to work with Ruby 2.0.0 or greater. While it may work on other version of Ruby, below are the platform and runtime versions officially supported and regularly tested against.
+
+Platform | Versions
+-------- | --------
+MRI | 2.0.0, 2.1.x, 2.2.x, 2.3.x
+JRuby | 1.7.x, 9.0.0.0
+Rubinius | 2.x
+
+All releases adhere to strict [semantic versioning](http://semver.org). For Example, major.minor.patch-pre (aka. stick.carrot.oops-peek).
+
+## Contributions & Feedback
+
+We love community contributions! If you're planning to send us a pull request, please make sure read our [Contributing Guidelines](https://github.com/github/graphql-relay-walker/blob/master/CONTRIBUTING.md) first.
+
+Found a bug or have a question? Open up [an issue](https://github.com/github/graphql-relay-walker/issues/new).
+
+## License
+
+The MIT License (MIT)
+
+Copyright (C) 2016 GitHub, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
