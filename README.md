@@ -1,4 +1,4 @@
-# GraphQL Relay Walker [![Build Status](https://travis-ci.org/github/graphql-relay-walker.svg?branch=master)](https://travis-ci.org/github/graphql-relay-walker)  [![Gem Version](https://badge.fury.io/rb/graphql-relay-walker.svg)](http://badge.fury.io/rb/graphql-relay-walker)
+# GraphQL Relay Walker [![Build Status](https://travis-ci.org/github/graphql-relay-walker.svg?branch=master&a=b)](https://travis-ci.org/github/graphql-relay-walker)  [![Gem Version](https://badge.fury.io/rb/graphql-relay-walker.svg)](http://badge.fury.io/rb/graphql-relay-walker)
 
 ![](https://cloud.githubusercontent.com/assets/1144197/19287829/9ce479b8-8fc0-11e6-975c-8d686e3e0783.jpg)
 
