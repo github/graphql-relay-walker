@@ -79,13 +79,7 @@ end
 
 ## Compatibility & Versioning
 
-This project is designed to work with Ruby 2.0.0 or greater. While it may work on other version of Ruby, below are the platform and runtime versions officially supported and regularly tested against.
-
-Platform | Versions
--------- | --------
-MRI | 2.0.0, 2.1.x, 2.2.x, 2.3.x
-JRuby | 1.7.x, 9.0.0.0
-Rubinius | 2.x
+This project is designed to work with MRI Ruby 2.2.2 or greater. It may work on other versions of Ruby.
 
 All releases adhere to strict [semantic versioning](http://semver.org). For Example, major.minor.patch-pre (aka. stick.carrot.oops-peek).
 
