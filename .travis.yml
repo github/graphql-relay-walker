@@ -2,3 +2,6 @@ language: ruby
 rvm:
   - 2.2.2
   - ruby-head
+branches:
+  only:
+    - master
