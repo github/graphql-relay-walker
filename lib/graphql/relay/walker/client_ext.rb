@@ -3,6 +3,8 @@ module GraphQL::Relay::Walker
     # Walk this client's graph from the given GID.
     #
     # from_id: - The String GID to start walking from.
+    # variables: - A Hash of variables to be passed to GraphQL::Client.
+    # context: - A Hash containing context to be passed to GraphQL::Client.
     # &blk     - A block to call with each Walker::Frame that is visited.
     #
     # Returns nothing.
