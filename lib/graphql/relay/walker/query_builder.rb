@@ -106,7 +106,7 @@ module GraphQL::Relay::Walker
 
       # Bail unless we have the required arguments.
       return unless field.arguments.reject do |_, arg|
-        arg.type.valid_input?(nil)
+        valid_input?(arg.type, nil)
       end.all? do |name, _|
         arguments.key?(name)
       end
@@ -242,6 +242,17 @@ module GraphQL::Relay::Walker
     # Returns a six character random String.
     def random_alias
       6.times.map { (SecureRandom.random_number(26) + 97).chr }.join
+    end
+
+    if GraphQL::VERSION >= "1.1.0"
+      def valid_input?(type, input)
+        allow_all = GraphQL::Schema::Warden.new(schema, ->(_) { false })
+        type.valid_input?(input, allow_all)
+      end
+    else
+      def valid_input?(type, input)
+        type.valid_input?(input)
+      end
     end
   end
 end
