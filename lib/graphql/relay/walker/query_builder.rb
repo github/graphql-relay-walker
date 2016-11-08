@@ -76,7 +76,7 @@ module GraphQL::Relay::Walker
     # created AST was invalid for having no selections.
     def inline_fragment_ast(type, with_children: true)
       make(GraphQL::Language::Nodes::InlineFragment) do |if_ast|
-        if_ast.type = type.name
+        if_ast.type = make_type_name_node(type.name)
 
         if with_children
           type.all_fields.each do |field|
@@ -252,6 +252,16 @@ module GraphQL::Relay::Walker
     else
       def valid_input?(type, input)
         type.valid_input?(input)
+      end
+    end
+
+    if GraphQL::VERSION >= "1.0.0"
+      def make_type_name_node(type_name)
+        GraphQL::Language::Nodes::TypeName.new(name: type_name)
+      end
+    else
+      def make_type_name_node(type_name)
+        type_name
       end
     end
   end
