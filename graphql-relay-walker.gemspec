@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "graphql-relay-walker"
-  s.version     = "0.0.3"
+  s.version     = "0.0.4"
   s.licenses    = ["MIT"]
   s.summary     = "A tool for traversing your GraphQL schema to proactively detect potential data access vulnerabilities."
   s.authors     = ["Ben Toews"]
