@@ -1,6 +1,5 @@
 require "graphql/client"
 require "graphql/client/http"
-require "graphql/relay/walker/client_ext"
 
 module GitHubWalker
   URL = "https://api.github.com/graphql"
@@ -25,8 +24,10 @@ module GitHubWalker
     }
   GRAPHQL
 
+  WalkerQuery = GraphQL::Relay::Walker.schema_query(Client)
+
   def self.walk(&blk)
     gid = Client.query(ViewerIdQuery).data.viewer.id
-    Client.walk(from_id: gid, &blk)
+    GraphQL::Relay::Walker.client_walk(client: Client, query: WalkerQuery, from_id: gid, &blk)
   end
 end
