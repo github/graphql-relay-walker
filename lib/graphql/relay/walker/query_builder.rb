@@ -239,9 +239,9 @@ module GraphQL::Relay::Walker
 
     # Make a random alias for a field.
     #
-    # Returns a six character random String.
+    # Returns a twelve character random String.
     def random_alias
-      6.times.map { (SecureRandom.random_number(26) + 97).chr }.join
+      12.times.map { (SecureRandom.random_number(26) + 97).chr }.join
     end
 
     if GraphQL::VERSION >= "1.4.0"
