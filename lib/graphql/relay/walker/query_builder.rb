@@ -246,8 +246,7 @@ module GraphQL::Relay::Walker
 
     if GraphQL::VERSION >= "1.5.6"
       def valid_input?(type, input)
-        allow_all = GraphQL::Schema::Warden.new(->(_) { false }, schema: schema, context: nil)
-        type.valid_isolated_input?(input, allow_all)
+        type.valid_isolated_input?(input)
       end
     elsif GraphQL::VERSION >= "1.4.0"
       def valid_input?(type, input)
