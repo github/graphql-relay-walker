@@ -106,11 +106,7 @@ module GraphQL::Relay::Walker
 
       # Bail unless we have the required arguments.
       return unless field.arguments.reject do |_, arg|
-        if GraphQL::VERSION >= "1.5.6"
-          type.valid_isolated_input?(arg.type)
-        else
-          valid_input?(arg.type)
-        end
+        valid_input?(arg.type, nil)
       end.all? do |name, _|
         arguments.key?(name)
       end
