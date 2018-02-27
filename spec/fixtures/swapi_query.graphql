@@ -1,5 +1,6 @@
 query($id: ID!) {
   node(id: $id) {
+    id
     ... on Film {
       speciesConnection(first: 5) {
         edges {

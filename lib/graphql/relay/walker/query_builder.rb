@@ -1,7 +1,7 @@
 module GraphQL::Relay::Walker
   class QueryBuilder
     DEFAULT_ARGUMENTS = {"first" => 5}
-    BASE_QUERY = "query($id: ID!) { node(id: $id) {} }"
+    BASE_QUERY = "query($id: ID!) { node(id: $id) { id } }"
 
     attr_reader :schema, :connection_arguments, :ast
 
