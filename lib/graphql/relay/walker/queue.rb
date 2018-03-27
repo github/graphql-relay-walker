@@ -42,7 +42,7 @@ module GraphQL::Relay::Walker
     # parent - The frame where this GID was discovered (optional).
     #
     # Returns true if a frame was added, false otherwise.
-    def add_gid(gid, parent=nil)
+    def add_gid(gid, parent = nil)
       frame = Frame.new(self, gid, parent)
       add(frame)
     end

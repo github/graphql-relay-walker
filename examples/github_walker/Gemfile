@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "graphql-client", "~> 0.2"
-gem "graphql-relay-walker", path: "../.."
+gem 'graphql-client', '~> 0.2'
+gem 'graphql-relay-walker', path: '../..'

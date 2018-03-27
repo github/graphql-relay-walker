@@ -1,4 +1,4 @@
-require "graphql"
+require 'graphql'
 
 module GraphQL::Relay
   module Walker
@@ -26,10 +26,9 @@ module GraphQL::Relay
       queue.add_gid(from_id)
       queue.each_frame(&blk)
     end
-
   end
 end
 
-require "graphql/relay/walker/queue"
-require "graphql/relay/walker/frame"
-require "graphql/relay/walker/query_builder"
+require 'graphql/relay/walker/queue'
+require 'graphql/relay/walker/frame'
+require 'graphql/relay/walker/query_builder'

@@ -1,7 +1,7 @@
 module GraphQL::Relay::Walker
   class QueryBuilder
-    DEFAULT_ARGUMENTS = {"first" => 5}
-    BASE_QUERY = "query($id: ID!) { node(id: $id) { id } }"
+    DEFAULT_ARGUMENTS = { 'first' => 5 }.freeze
+    BASE_QUERY = 'query($id: ID!) { node(id: $id) { id } }'.freeze
 
     attr_reader :schema, :connection_arguments, :ast
 
@@ -86,7 +86,7 @@ module GraphQL::Relay::Walker
               if_ast.selections << connection_field_ast(field)
             end
           end
-        elsif id = type.get_field("id")
+        elsif id = type.get_field('id')
           if_ast.selections << field_ast(id)
         end
       end
@@ -101,7 +101,7 @@ module GraphQL::Relay::Walker
     #
     # Returns a GraphQL::Language::Nodes::Field instance or nil if the created
     # AST was invalid for having no selections or missing required arguments.
-    def field_ast(field, arguments={}, &blk)
+    def field_ast(field, arguments = {}, &blk)
       type = field.type.unwrap
 
       # Bail unless we have the required arguments.
@@ -113,12 +113,12 @@ module GraphQL::Relay::Walker
 
       make(GraphQL::Language::Nodes::Field, needs_selections: !type.kind.scalar?) do |f_ast|
         f_ast.name = field.name
-        f_ast.alias = random_alias unless field.name == "id"
+        f_ast.alias = random_alias unless field.name == 'id'
         f_ast.arguments = arguments.map do |name, value|
           GraphQL::Language::Nodes::Argument.new(name: name, value: value)
         end
 
-        blk.call(f_ast, type) if blk
+        yield(f_ast, type) if blk
       end
     end
 
@@ -132,10 +132,10 @@ module GraphQL::Relay::Walker
         selections = f_ast.selections
 
         if type.kind.object?
-           selections << field_ast(type.get_field("id"))
+          selections << field_ast(type.get_field('id'))
         else
           possible_node_types(type).each do |if_type|
-             selections << inline_fragment_ast(if_type, with_children: false)
+            selections << inline_fragment_ast(if_type, with_children: false)
           end
         end
       end
@@ -148,7 +148,7 @@ module GraphQL::Relay::Walker
     # Returns a GraphQL::Language::Nodes::Field instance.
     def edges_field_ast(field)
       field_ast(field) do |f_ast, type|
-        f_ast.selections << node_field_ast(type.get_field("node"))
+        f_ast.selections << node_field_ast(type.get_field('node'))
       end
     end
 
@@ -160,7 +160,7 @@ module GraphQL::Relay::Walker
     # AST was invalid for missing required arguments.
     def connection_field_ast(field)
       field_ast(field, connection_arguments) do |f_ast, type|
-        f_ast.selections << edges_field_ast(type.get_field("edges"))
+        f_ast.selections << edges_field_ast(type.get_field('edges'))
       end
     end
 
@@ -191,9 +191,9 @@ module GraphQL::Relay::Walker
     def connection_field?(field)
       type = field.type.unwrap
 
-      if edges_field = type.get_field("edges")
+      if edges_field = type.get_field('edges')
         edges = edges_field.type.unwrap
-        if node_field = edges.get_field("node")
+        if node_field = edges.get_field('node')
           return node_field?(node_field)
         end
       end
@@ -234,7 +234,7 @@ module GraphQL::Relay::Walker
     #
     # Returns a GraphQL::InterfaceType instance.
     def node_interface
-      schema.types["Node"]
+      schema.types['Node']
     end
 
     # Make a random alias for a field.
@@ -244,16 +244,16 @@ module GraphQL::Relay::Walker
       12.times.map { (SecureRandom.random_number(26) + 97).chr }.join
     end
 
-    if GraphQL::VERSION >= "1.5.6"
+    if GraphQL::VERSION >= '1.5.6'
       def valid_input?(type, input)
         type.valid_isolated_input?(input)
       end
-    elsif GraphQL::VERSION >= "1.4.0"
+    elsif GraphQL::VERSION >= '1.4.0'
       def valid_input?(type, input)
         allow_all = GraphQL::Schema::Warden.new(->(_) { false }, schema: schema, context: nil)
         type.valid_input?(input, allow_all)
       end
-    elsif GraphQL::VERSION >= "1.1.0"
+    elsif GraphQL::VERSION >= '1.1.0'
       def valid_input?(type, input)
         allow_all = GraphQL::Schema::Warden.new(schema, ->(_) { false })
         type.valid_input?(input, allow_all)
@@ -264,7 +264,7 @@ module GraphQL::Relay::Walker
       end
     end
 
-    if GraphQL::VERSION >= "1.0.0"
+    if GraphQL::VERSION >= '1.0.0'
       def make_type_name_node(type_name)
         GraphQL::Language::Nodes::TypeName.new(name: type_name)
       end

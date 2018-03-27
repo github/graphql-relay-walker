@@ -15,12 +15,12 @@ module GraphQL::Relay::Walker
       GraphQL::Relay::Walker.walk(from_id: from_id) do |frame|
         response = query(
           walker_query,
-          variables: variables.merge({"id" => frame.gid}),
+          variables: variables.merge('id' => frame.gid),
           context: context
         )
 
         frame.context[:response] = response
-        frame.result = (response.respond_to?(:data) && response.data) ? response.data.to_h : {}
+        frame.result = response.respond_to?(:data) && response.data ? response.data.to_h : {}
         frame.enqueue_found_gids
 
         yield(frame) if block_given?
@@ -30,8 +30,8 @@ module GraphQL::Relay::Walker
 end
 
 begin
-  require "graphql/relay/walker"
-  require "graphql/client"
+  require 'graphql/relay/walker'
+  require 'graphql/client'
   GraphQL::Client.send(:include, GraphQL::Relay::Walker::ClientExt)
 rescue LoadError
 end

@@ -1,15 +1,15 @@
-require "graphql/client"
-require "graphql/client/http"
-require "graphql/relay/walker/client_ext"
+require 'graphql/client'
+require 'graphql/client/http'
+require 'graphql/relay/walker/client_ext'
 
 module GitHubWalker
-  URL = "https://api.github.com/graphql"
+  URL = 'https://api.github.com/graphql'.freeze
 
-  TOKEN = ENV["GITHUB_ACCESS_TOKEN"]
+  TOKEN = ENV['GITHUB_ACCESS_TOKEN']
 
   HTTP = GraphQL::Client::HTTP.new(URL) do
-    def headers(context)
-      {"Authorization" => "Bearer #{TOKEN}"}
+    def headers(_context)
+      { 'Authorization' => "Bearer #{TOKEN}" }
     end
   end
 

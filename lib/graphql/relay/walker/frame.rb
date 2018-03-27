@@ -36,11 +36,11 @@ module GraphQL::Relay::Walker
     # The GIDs from this frame's results.
     #
     # Returns an Array of GID Strings.
-    def found_gids(data=result)
+    def found_gids(data = result)
       [].tap do |ids|
         case data
         when Hash
-          ids.concat(Array(data["id"]))
+          ids.concat(Array(data['id']))
           ids.concat(found_gids(data.values))
         when Array
           data.each { |datum| ids.concat(found_gids(datum)) }

@@ -10,26 +10,26 @@
 #   `GITHUB_ACCESS_TOKEN` environment variable.
 #
 
-require "json"
+require 'json'
 
-unless ENV["GITHUB_ACCESS_TOKEN"]
+unless ENV['GITHUB_ACCESS_TOKEN']
   lines = File.read(__FILE__).split("\n")
   help = []
-  help << lines.shift[2..-1] while lines.first.start_with?("#")
+  help << lines.shift[2..-1] while lines.first.start_with?('#')
   puts help.join("\n")
   exit(1)
 end
 
-puts "Loading GitHub Schema"
-$:.unshift File.expand_path('../../lib', __FILE__)
-require "github_walker"
+puts 'Loading GitHub Schema'
+$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
+require 'github_walker'
 
 stats = {
-  :depth  => Hash.new { |h,k| h[k] = 0 },
-  :total  => 0
+  depth: Hash.new { |h, k| h[k] = 0 },
+  total: 0
 }
 
-def frame_depth(frame, depth=1)
+def frame_depth(frame, depth = 1)
   if frame.parent
     frame_depth(frame.parent, depth + 1)
   else
@@ -37,7 +37,7 @@ def frame_depth(frame, depth=1)
   end
 end
 
-puts "Starting walking"
+puts 'Starting walking'
 GitHubWalker.walk do |frame|
   stats[:total] += 1
   stats[:depth][frame_depth(frame)] += 1
