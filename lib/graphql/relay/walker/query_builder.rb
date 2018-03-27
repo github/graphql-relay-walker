@@ -3,7 +3,7 @@ module GraphQL::Relay::Walker
     DEFAULT_ARGUMENTS = { 'first' => 5 }.freeze
     BASE_QUERY = 'query($id: ID!) { node(id: $id) { id } }'.freeze
 
-    attr_reader :schema, :connection_arguments, :ast
+    attr_reader :schema, :connection_arguments, :ast, :except, :only
 
     # Initialize a new QueryBuilder.
     #
@@ -12,8 +12,10 @@ module GraphQL::Relay::Walker
     #                         (optional).
     #
     # Returns nothing.
-    def initialize(schema, connection_arguments: DEFAULT_ARGUMENTS)
+    def initialize(schema, except: nil, only: nil, connection_arguments: DEFAULT_ARGUMENTS)
       @schema = schema
+      @except = except
+      @only   = only
       @connection_arguments = connection_arguments
       @ast = build_query
     end
@@ -37,11 +39,23 @@ module GraphQL::Relay::Walker
         selections = d_ast.definitions.first.selections.first.selections
 
         node_types.each do |type|
-          selections << inline_fragment_ast(type)
+          selections << inline_fragment_ast(type) if include?(type)
         end
 
         selections.compact!
       end
+    end
+
+    # Private: Depending on the `except` or `include` filters,
+    # should this item be included a AST of the given type.
+    #
+    # type           - The GraphQL item to identify to make the fragment
+    #
+    # Returns a Boolean.
+    def include?(type)
+      return !@except.call(type, {}) if @except
+      return @only.call(type, {}) if @only
+      true
     end
 
     # Private: Make a AST of the given type.
@@ -80,9 +94,10 @@ module GraphQL::Relay::Walker
 
         if with_children
           type.all_fields.each do |field|
-            if node_field?(field)
+            field_type = field.type.unwrap
+            if node_field?(field) && include?(field_type)
               if_ast.selections << node_field_ast(field)
-            elsif connection_field?(field)
+            elsif connection_field?(field) && include?(field_type)
               if_ast.selections << connection_field_ast(field)
             end
           end

@@ -8,8 +8,8 @@ module GraphQL::Relay::Walker
     # &blk     - A block to call with each Walker::Frame that is visited.
     #
     # Returns nothing.
-    def walk(from_id:, variables: {}, context: {})
-      query_string = GraphQL::Relay::Walker.query_string(schema)
+    def walk(from_id:, except: nil, only: nil, variables: {}, context: {})
+      query_string = GraphQL::Relay::Walker.query_string(schema, except: except, only: only)
       walker_query = parse(query_string)
 
       GraphQL::Relay::Walker.walk(from_id: from_id) do |frame|

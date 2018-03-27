@@ -8,8 +8,8 @@ module GraphQL::Relay
     # schema - The GraphQL::Schema to build a query for.
     #
     # Returns a String query.
-    def self.query_string(schema)
-      QueryBuilder.new(schema).query_string
+    def self.query_string(schema, except: nil, only: nil)
+      QueryBuilder.new(schema, except: except, only: only).query_string
     end
 
     # Start traversing a graph, starting from the given relay node ID.
