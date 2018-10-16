@@ -82,6 +82,8 @@ module GraphQL::Relay::Walker
         selections << field_ast(id)
       end
 
+      selections.compact!
+
       GraphQL::Language::Nodes::InlineFragment.new(
         type: make_type_name_node(type.name),
         selections: selections,
@@ -101,18 +103,20 @@ module GraphQL::Relay::Walker
       type = field.type.unwrap
 
       # Bail unless we have the required arguments.
-      return unless field.arguments.reject do |_, arg|
-        valid_input?(arg.type, nil)
-      end.all? do |name, _|
-        arguments.key?(name)
+      required_args_are_present = field.arguments.all? do |arg_name, arg|
+        arguments.key?(arg_name) || valid_input?(arg.type, nil)
       end
 
-      f_alias = field.name == 'id' ? nil : random_alias
-      f_args = arguments.map do |name, value|
-        GraphQL::Language::Nodes::Argument.new(name: name, value: value)
-      end
+      if !required_args_are_present
+        nil
+      else
+        f_alias = field.name == 'id' ? nil : random_alias
+        f_args = arguments.map do |name, value|
+          GraphQL::Language::Nodes::Argument.new(name: name, value: value)
+        end
 
-      GraphQL::Language::Nodes::Field.new(name: field.name, alias: f_alias, arguments: f_args)
+        GraphQL::Language::Nodes::Field.new(name: field.name, alias: f_alias, arguments: f_args)
+      end
     end
 
     # Make a field AST for a node field.
@@ -122,8 +126,9 @@ module GraphQL::Relay::Walker
     # Returns a GraphQL::Language::Nodes::Field instance.
     def node_field_ast(field)
       f_ast = field_ast(field)
+      return nil if f_ast.nil?
       type = field.type.unwrap
-      selections = f_ast.selections
+      selections = f_ast.selections.dup
 
       if type.kind.object?
         selections << field_ast(type.get_field('id'))
@@ -132,10 +137,13 @@ module GraphQL::Relay::Walker
           selections << inline_fragment_ast(if_type, with_children: false)
         end
       end
+
+      selections.compact!
+
       if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
         f_ast = f_ast.merge(selections: selections)
       else
-        # They were updated in-place
+        f_ast.selections = selections
       end
       f_ast
     end
@@ -147,6 +155,7 @@ module GraphQL::Relay::Walker
     # Returns a GraphQL::Language::Nodes::Field instance.
     def edges_field_ast(field)
       f_ast = field_ast(field)
+      return nil if f_ast.nil?
       node_fields = [node_field_ast(field.type.unwrap.get_field('node'))]
       if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
         f_ast.merge(selections: f_ast.selections + node_fields)
@@ -164,6 +173,7 @@ module GraphQL::Relay::Walker
     # AST was invalid for missing required arguments.
     def connection_field_ast(field)
       f_ast = field_ast(field, connection_arguments)
+      return nil if f_ast.nil?
       edges_fields = [edges_field_ast(field.type.unwrap.get_field('edges'))]
       if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
         f_ast.merge(selections: f_ast.selections + edges_fields)
