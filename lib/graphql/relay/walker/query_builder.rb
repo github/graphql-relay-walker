@@ -132,7 +132,11 @@ module GraphQL::Relay::Walker
           selections << inline_fragment_ast(if_type, with_children: false)
         end
       end
-      f_ast = f_ast.merge(selections: selections)
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast = f_ast.merge(selections: selections)
+      else
+        # They were updated in-place
+      end
       f_ast
     end
 
@@ -144,8 +148,12 @@ module GraphQL::Relay::Walker
     def edges_field_ast(field)
       f_ast = field_ast(field)
       node_fields = [node_field_ast(field.type.unwrap.get_field('node'))]
-      f_ast = f_ast.merge(selections: f_ast.selections + node_fields)
-      f_ast
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast.merge(selections: f_ast.selections + node_fields)
+      else
+        f_ast.selections.concat(node_fields)
+        f_ast
+      end
     end
 
     # Make a field AST for a connection field.
@@ -157,8 +165,12 @@ module GraphQL::Relay::Walker
     def connection_field_ast(field)
       f_ast = field_ast(field, connection_arguments)
       edges_fields = [edges_field_ast(field.type.unwrap.get_field('edges'))]
-      f_ast = f_ast.merge(selections: f_ast.selections + edges_fields)
-      f_ast
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast.merge(selections: f_ast.selections + edges_fields)
+      else
+        f_ast.selections.concat(edges_fields)
+        f_ast
+      end
     end
 
     # Is this field for a relay node?
