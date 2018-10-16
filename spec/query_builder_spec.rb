@@ -37,4 +37,20 @@ describe GraphQL::Relay::Walker::QueryBuilder do
       end
     end
   end
+
+  def fields(ast)
+    nodes(ast).select { |node| node.is_a?(GraphQL::Language::Nodes::Field) }
+  end
+
+  def nodes(ast)
+    children = if ast.respond_to?(:selections)
+                 ast.selections
+               elsif ast.respond_to?(:definitions)
+                 ast.definitions
+               else
+                 []
+    end
+
+    children + children.map { |child| nodes(child) }.flatten
+  end
 end
