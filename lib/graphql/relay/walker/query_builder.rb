@@ -84,10 +84,14 @@ module GraphQL::Relay::Walker
 
       selections.compact!
 
-      GraphQL::Language::Nodes::InlineFragment.new(
-        type: make_type_name_node(type.name),
-        selections: selections,
-      )
+      if selections.none?
+        nil
+      else
+        GraphQL::Language::Nodes::InlineFragment.new(
+          type: make_type_name_node(type.name),
+          selections: selections,
+        )
+      end
     end
 
     # Make a field AST.
