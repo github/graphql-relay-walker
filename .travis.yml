@@ -5,3 +5,6 @@ rvm:
 branches:
   only:
     - master
+env:
+  - ""
+  - "GRAPHQL_19=true"
