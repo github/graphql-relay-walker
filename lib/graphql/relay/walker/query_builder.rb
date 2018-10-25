@@ -58,27 +58,6 @@ module GraphQL::Relay::Walker
       true
     end
 
-    # Private: Make a AST of the given type.
-    #
-    # klass             - The GraphQL::Language::Nodes::AbstractNode subclass
-    #                     to create.
-    # needs_selections: - Boolean. Will this AST be invalid if it doesn't have
-    #                     any selections?
-    #
-    # Returns a GraphQL::Language::Nodes::AbstractNode subclass instance or nil
-    # if the created AST was invalid for having no selections.
-    def make(klass, needs_selections: true)
-      k_ast = klass.new
-      yield(k_ast) if block_given?
-      k_ast.selections.compact!
-
-      if k_ast.selections.empty? && needs_selections
-        nil
-      else
-        k_ast
-      end
-    end
-
     # Make an inline fragment AST.
     #
     # type           - The GraphQL::ObjectType instance to make the fragment
@@ -89,21 +68,29 @@ module GraphQL::Relay::Walker
     # Returns a GraphQL::Language::Nodes::InlineFragment instance or nil if the
     # created AST was invalid for having no selections.
     def inline_fragment_ast(type, with_children: true)
-      make(GraphQL::Language::Nodes::InlineFragment) do |if_ast|
-        if_ast.type = make_type_name_node(type.name)
-
-        if with_children
-          type.all_fields.each do |field|
-            field_type = field.type.unwrap
-            if node_field?(field) && include?(field_type)
-              if_ast.selections << node_field_ast(field)
-            elsif connection_field?(field) && include?(field_type)
-              if_ast.selections << connection_field_ast(field)
-            end
+      selections = []
+      if with_children
+        type.all_fields.each do |field|
+          field_type = field.type.unwrap
+          if node_field?(field) && include?(field_type)
+            selections << node_field_ast(field)
+          elsif connection_field?(field) && include?(field_type)
+            selections << connection_field_ast(field)
           end
-        elsif id = type.get_field('id')
-          if_ast.selections << field_ast(id)
         end
+      elsif id = type.get_field('id')
+        selections << field_ast(id)
+      end
+
+      selections.compact!
+
+      if selections.none?
+        nil
+      else
+        GraphQL::Language::Nodes::InlineFragment.new(
+          type: make_type_name_node(type.name),
+          selections: selections,
+        )
       end
     end
 
@@ -120,20 +107,19 @@ module GraphQL::Relay::Walker
       type = field.type.unwrap
 
       # Bail unless we have the required arguments.
-      return unless field.arguments.reject do |_, arg|
-        valid_input?(arg.type, nil)
-      end.all? do |name, _|
-        arguments.key?(name)
+      required_args_are_present = field.arguments.all? do |arg_name, arg|
+        arguments.key?(arg_name) || valid_input?(arg.type, nil)
       end
 
-      make(GraphQL::Language::Nodes::Field, needs_selections: !type.kind.scalar?) do |f_ast|
-        f_ast.name = field.name
-        f_ast.alias = random_alias unless field.name == 'id'
-        f_ast.arguments = arguments.map do |name, value|
+      if !required_args_are_present
+        nil
+      else
+        f_alias = field.name == 'id' ? nil : random_alias
+        f_args = arguments.map do |name, value|
           GraphQL::Language::Nodes::Argument.new(name: name, value: value)
         end
 
-        yield(f_ast, type) if blk
+        GraphQL::Language::Nodes::Field.new(name: field.name, alias: f_alias, arguments: f_args)
       end
     end
 
@@ -143,17 +129,27 @@ module GraphQL::Relay::Walker
     #
     # Returns a GraphQL::Language::Nodes::Field instance.
     def node_field_ast(field)
-      field_ast(field) do |f_ast, type|
-        selections = f_ast.selections
+      f_ast = field_ast(field)
+      return nil if f_ast.nil?
+      type = field.type.unwrap
+      selections = f_ast.selections.dup
 
-        if type.kind.object?
-          selections << field_ast(type.get_field('id'))
-        else
-          possible_node_types(type).each do |if_type|
-            selections << inline_fragment_ast(if_type, with_children: false)
-          end
+      if type.kind.object?
+        selections << field_ast(type.get_field('id'))
+      else
+        possible_node_types(type).each do |if_type|
+          selections << inline_fragment_ast(if_type, with_children: false)
         end
       end
+
+      selections.compact!
+
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast = f_ast.merge(selections: selections)
+      else
+        f_ast.selections = selections
+      end
+      f_ast
     end
 
     # Make a field AST for an edges field.
@@ -162,8 +158,14 @@ module GraphQL::Relay::Walker
     #
     # Returns a GraphQL::Language::Nodes::Field instance.
     def edges_field_ast(field)
-      field_ast(field) do |f_ast, type|
-        f_ast.selections << node_field_ast(type.get_field('node'))
+      f_ast = field_ast(field)
+      return nil if f_ast.nil?
+      node_fields = [node_field_ast(field.type.unwrap.get_field('node'))]
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast.merge(selections: f_ast.selections + node_fields)
+      else
+        f_ast.selections.concat(node_fields)
+        f_ast
       end
     end
 
@@ -174,8 +176,14 @@ module GraphQL::Relay::Walker
     # Returns a GraphQL::Language::Nodes::Field instance or nil if the created
     # AST was invalid for missing required arguments.
     def connection_field_ast(field)
-      field_ast(field, connection_arguments) do |f_ast, type|
-        f_ast.selections << edges_field_ast(type.get_field('edges'))
+      f_ast = field_ast(field, connection_arguments)
+      return nil if f_ast.nil?
+      edges_fields = [edges_field_ast(field.type.unwrap.get_field('edges'))]
+      if f_ast.respond_to?(:merge) # GraphQL-Ruby 1.9+
+        f_ast.merge(selections: f_ast.selections + edges_fields)
+      else
+        f_ast.selections.concat(edges_fields)
+        f_ast
       end
     end
 

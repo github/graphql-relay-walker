@@ -30,12 +30,10 @@ describe GraphQL::Relay::Walker::QueryBuilder do
     end
 
     describe 'with aliases removed' do
-      before do
-        fields(ast).each { |field| field.alias = nil }
-      end
-
       it 'matches the expected query string' do
-        expect(subject).to eq(File.read(query_path).strip)
+        # Replace the aliases, leaving the leading whitespace in place
+        string_without_aliases = subject.gsub(/  [a-z]{12}: /, "  ")
+        expect(string_without_aliases).to eq(File.read(query_path).strip)
       end
     end
   end
