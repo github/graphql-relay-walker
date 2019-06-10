@@ -267,34 +267,12 @@ module GraphQL::Relay::Walker
       12.times.map { (SecureRandom.random_number(26) + 97).chr }.join
     end
 
-    if GraphQL::VERSION >= '1.5.6'
-      def valid_input?(type, input)
-        type.valid_isolated_input?(input)
-      end
-    elsif GraphQL::VERSION >= '1.4.0'
-      def valid_input?(type, input)
-        allow_all = GraphQL::Schema::Warden.new(->(_) { false }, schema: schema, context: nil)
-        type.valid_input?(input, allow_all)
-      end
-    elsif GraphQL::VERSION >= '1.1.0'
-      def valid_input?(type, input)
-        allow_all = GraphQL::Schema::Warden.new(schema, ->(_) { false })
-        type.valid_input?(input, allow_all)
-      end
-    else
-      def valid_input?(type, input)
-        type.valid_input?(input)
-      end
+    def valid_input?(type, input)
+      type.valid_isolated_input?(input)
     end
 
-    if GraphQL::VERSION >= '1.0.0'
-      def make_type_name_node(type_name)
-        GraphQL::Language::Nodes::TypeName.new(name: type_name)
-      end
-    else
-      def make_type_name_node(type_name)
-        type_name
-      end
+    def make_type_name_node(type_name)
+      GraphQL::Language::Nodes::TypeName.new(name: type_name)
     end
   end
 end
