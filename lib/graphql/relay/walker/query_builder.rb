@@ -70,7 +70,10 @@ module GraphQL::Relay::Walker
     def inline_fragment_ast(type, with_children: true)
       selections = []
       if with_children
-        type.all_fields.each do |field|
+        # Class-based types return all fields in `.fields`
+        all_fields = type.respond_to?(:all_fields) ? type.all_fields : type.fields.values
+        all_fields = all_fields.sort_by(&:graphql_name)
+        all_fields.each do |field|
           field_type = field.type.unwrap
           if node_field?(field) && include?(field_type)
             selections << node_field_ast(field)
@@ -88,7 +91,7 @@ module GraphQL::Relay::Walker
         nil
       else
         GraphQL::Language::Nodes::InlineFragment.new(
-          type: make_type_name_node(type.name),
+          type: make_type_name_node(type.graphql_name),
           selections: selections,
         )
       end
@@ -114,12 +117,12 @@ module GraphQL::Relay::Walker
       if !required_args_are_present
         nil
       else
-        f_alias = field.name == 'id' ? nil : random_alias
+        f_alias = field.graphql_name == 'id' ? nil : random_alias
         f_args = arguments.map do |name, value|
           GraphQL::Language::Nodes::Argument.new(name: name, value: value)
         end
 
-        GraphQL::Language::Nodes::Field.new(name: field.name, alias: f_alias, arguments: f_args)
+        GraphQL::Language::Nodes::Field.new(name: field.graphql_name, alias: f_alias, arguments: f_args)
       end
     end
 
@@ -213,11 +216,12 @@ module GraphQL::Relay::Walker
     # `node` field that is a relay node. Returns false otherwise.
     def connection_field?(field)
       type = field.type.unwrap
-
-      if edges_field = type.get_field('edges')
-        edges = edges_field.type.unwrap
-        if node_field = edges.get_field('node')
-          return node_field?(node_field)
+      if type.kind.fields?
+        if edges_field = type.get_field('edges')
+          edges = edges_field.type.unwrap
+          if node_field = edges.get_field('node')
+            return node_field?(node_field)
+          end
         end
       end
 
@@ -268,7 +272,7 @@ module GraphQL::Relay::Walker
     end
 
     def valid_input?(type, input)
-      type.valid_isolated_input?(input)
+      type.valid_input?(input, GraphQL::Query::NullContext)
     end
 
     def make_type_name_node(type_name)
