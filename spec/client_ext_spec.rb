@@ -1,4 +1,3 @@
-require "pry"
 require 'graphql/client'
 require 'graphql/relay/walker'
 require 'graphql/relay/walker/client_ext'
