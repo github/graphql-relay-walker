@@ -2,6 +2,20 @@ query($id: ID!) {
   node(id: $id) {
     id
     ... on Film {
+      characterConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      planetConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       speciesConnection(first: 5) {
         edges {
           node {
@@ -23,31 +37,17 @@ query($id: ID!) {
           }
         }
       }
-      characterConnection(first: 5) {
-        edges {
-          node {
-            id
-          }
-        }
-      }
-      planetConnection(first: 5) {
-        edges {
-          node {
-            id
-          }
-        }
-      }
     }
     ... on Person {
-      homeworld {
-        id
-      }
       filmConnection(first: 5) {
         edges {
           node {
             id
           }
         }
+      }
+      homeworld {
+        id
       }
       species {
         id
@@ -68,14 +68,14 @@ query($id: ID!) {
       }
     }
     ... on Planet {
-      residentConnection(first: 5) {
+      filmConnection(first: 5) {
         edges {
           node {
             id
           }
         }
       }
-      filmConnection(first: 5) {
+      residentConnection(first: 5) {
         edges {
           node {
             id
@@ -84,6 +84,13 @@ query($id: ID!) {
       }
     }
     ... on Species {
+      filmConnection(first: 5) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       homeworld {
         id
       }
@@ -94,23 +101,16 @@ query($id: ID!) {
           }
         }
       }
-      filmConnection(first: 5) {
-        edges {
-          node {
-            id
-          }
-        }
-      }
     }
     ... on Starship {
-      pilotConnection(first: 5) {
+      filmConnection(first: 5) {
         edges {
           node {
             id
           }
         }
       }
-      filmConnection(first: 5) {
+      pilotConnection(first: 5) {
         edges {
           node {
             id
@@ -119,14 +119,14 @@ query($id: ID!) {
       }
     }
     ... on Vehicle {
-      pilotConnection(first: 5) {
+      filmConnection(first: 5) {
         edges {
           node {
             id
           }
         }
       }
-      filmConnection(first: 5) {
+      pilotConnection(first: 5) {
         edges {
           node {
             id

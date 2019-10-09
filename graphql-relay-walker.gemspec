@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.files += Dir.glob('lib/**/*.rb')
   s.homepage = 'https://github.com/github/graphql-relay-walker'
 
-  s.add_dependency 'graphql', '>= 1.5.6'
+  s.add_dependency 'graphql', '~> 1.8'
 
-  s.add_development_dependency 'graphql-client', '~> 0.2'
+  s.add_development_dependency 'graphql-client', '~> 0.15'
   s.add_development_dependency 'rake',           '~> 11.3'
   s.add_development_dependency 'rspec',          '~> 3.5'
 end
